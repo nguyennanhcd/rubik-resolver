@@ -1,8 +1,8 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
-import { Text, OrbitControls } from '@react-three/drei'
+import { Canvas } from '@react-three/fiber'
+import { OrbitControls } from '@react-three/drei'
 import type { Mesh, Group } from 'three'
 
 // Type Definitions
@@ -55,7 +55,6 @@ const initialCube: CubeState = {
   ]
 }
 
-// SmartCubie Component
 interface SmartCubieProps {
   position: [number, number, number]
   colors: {
@@ -69,19 +68,9 @@ interface SmartCubieProps {
   isHighlighted?: boolean
 }
 
-function SmartCubie({ position, colors, isHighlighted }: SmartCubieProps) {
+function SmartCubie({ position, colors }: SmartCubieProps) {
   const meshRef = useRef<Mesh>(null)
   const [hovered, setHovered] = useState(false)
-
-  useFrame((state) => {
-    if (meshRef.current && (hovered || isHighlighted)) {
-      meshRef.current.scale.setScalar(
-        1 + Math.sin(state.clock.elapsedTime * 4) * 0.05
-      )
-    } else if (meshRef.current) {
-      meshRef.current.scale.setScalar(1)
-    }
-  })
 
   return (
     <group>
@@ -162,15 +151,6 @@ export function EnhancedCube3D({
   currentMove?: string
 }) {
   const groupRef = useRef<Group>(null)
-  const [autoRotate, setAutoRotate] = useState(true)
-
-  useFrame((state) => {
-    if (groupRef.current && autoRotate) {
-      groupRef.current.rotation.y += 0.005
-      groupRef.current.rotation.x =
-        Math.sin(state.clock.elapsedTime * 0.3) * 0.1
-    }
-  })
 
   const getCubieColors = (x: number, y: number, z: number) => {
     const colors: SmartCubieProps['colors'] = {}
@@ -218,7 +198,7 @@ export function EnhancedCube3D({
 
   return (
     <group>
-      <group ref={groupRef} onClick={() => setAutoRotate(!autoRotate)}>
+      <group ref={groupRef}>
         {[-1, 0, 1].map((x) =>
           [-1, 0, 1].map((y) =>
             [-1, 0, 1].map((z) => {
@@ -239,34 +219,6 @@ export function EnhancedCube3D({
           )
         )}
       </group>
-      <mesh
-        position={[0, -2.5, 0]}
-        rotation={[-Math.PI / 2, 0, 0]}
-        receiveShadow
-      >
-        <circleGeometry args={[4, 64]} />
-        <meshStandardMaterial color='#f8f9fa' transparent opacity={0.4} />
-      </mesh>
-      {currentMove && (
-        <Text
-          position={[0, 3, 0]}
-          fontSize={0.5}
-          color='#1f2937'
-          anchorX='center'
-          anchorY='middle'
-        >
-          Current Move: {currentMove}
-        </Text>
-      )}
-      <Text
-        position={[0, -3.5, 0]}
-        fontSize={0.3}
-        color='#6b7280'
-        anchorX='center'
-        anchorY='middle'
-      >
-        Click cube to toggle auto-rotation
-      </Text>
     </group>
   )
 }
@@ -307,7 +259,7 @@ export default function RubiksCubeScene() {
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} intensity={1} />
         <EnhancedCube3D cube={cube} currentMove={currentMove} />
-        <OrbitControls />
+        <OrbitControls enableZoom={false} enablePan={false} />
       </Canvas>
       <div style={{ position: 'absolute', top: 20, left: 20 }}>
         <button onClick={() => applyMove('R')}>Rotate Right (R)</button>

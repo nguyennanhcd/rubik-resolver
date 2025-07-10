@@ -118,7 +118,7 @@ const CubeFaceComponent = ({
   </div>
 )
 
-export default function Component() {
+export default function RubikResolver() {
   const [cube, setCube] = useState<CubeState>(createSolvedCube())
   const [solutionSteps, setSolutionSteps] = useState<string[]>([])
   const [currentStep, setCurrentStep] = useState(0)
