@@ -2,38 +2,14 @@
 import React, { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Canvas } from '@react-three/fiber'
-import { OrbitControls } from '@react-three/drei'
 import { Shuffle, RefreshCw, Lightbulb } from 'lucide-react'
-import { CubeFace } from '@/types/cubeType'
-import { colorMap } from '@/constants/colorMap'
-import { EnhancedCube3D } from './Cube3D'
 import { createSolvedCube } from '@/constants/solveConstant'
 import { CubeState } from '@/interfaces/cubeInterfaces'
 import { scrambleCube } from '@/lib/scrambleCube'
 import { faceRotations } from '@/constants/cubeConstant'
+import Show3D from './Show3D'
+import Show2D from './Show2D'
 
-const CubeFaceComponent = ({
-  face,
-  title
-}: {
-  face: CubeFace
-  title: string
-}) => (
-  <div className='flex flex-col items-center gap-1'>
-    <div className='text-xs font-medium text-muted-foreground'>{title}</div>
-    <div className='grid grid-cols-3 gap-0.5 p-2 bg-gray-100 rounded'>
-      {face.map((row, i) =>
-        row.map((color, j) => (
-          <div
-            key={`${i}-${j}`}
-            className={`w-6 h-6 border-2 rounded-sm ${colorMap[color]}`}
-          />
-        ))
-      )}
-    </div>
-  </div>
-)
 interface ChildProps {
   solutionSteps: string[]
   setSolutionSteps: React.Dispatch<React.SetStateAction<string[]>>
@@ -115,47 +91,13 @@ const CubeVisualization: React.FC<ChildProps> = ({
         </CardHeader>
         <CardContent>
           {show3D ? (
-            <div className='h-96 w-full bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg overflow-hidden'>
-              <Canvas camera={{ position: [5, 5, 5], fov: 50 }} shadows>
-                <ambientLight intensity={0.4} />
-                <directionalLight
-                  position={[10, 10, 5]}
-                  intensity={1}
-                  castShadow
-                  shadow-mapSize-width={2048}
-                  shadow-mapSize-height={2048}
-                />
-                <pointLight position={[-10, -10, -10]} intensity={0.3} />
-                <EnhancedCube3D
-                  cube={cube}
-                  currentMove={solutionSteps[currentStep]}
-                />
-                <OrbitControls
-                  enablePan={false}
-                  enableZoom={true}
-                  enableRotate={true}
-                  maxDistance={10}
-                  minDistance={3}
-                />
-              </Canvas>
-            </div>
+            <Show3D
+              solutionSteps={solutionSteps}
+              currentStep={currentStep}
+              cube={cube}
+            />
           ) : (
-            <div className='grid grid-cols-4 gap-4 max-w-md mx-auto'>
-              <div></div>
-              <CubeFaceComponent face={cube.top} title='Top' />
-              <div></div>
-              <div></div>
-
-              <CubeFaceComponent face={cube.left} title='Left' />
-              <CubeFaceComponent face={cube.front} title='Front' />
-              <CubeFaceComponent face={cube.right} title='Right' />
-              <CubeFaceComponent face={cube.back} title='Back' />
-
-              <div></div>
-              <CubeFaceComponent face={cube.bottom} title='Bottom' />
-              <div></div>
-              <div></div>
-            </div>
+            <Show2D cube={cube} />
           )}
 
           <div className='flex justify-center gap-2 mt-6'>
