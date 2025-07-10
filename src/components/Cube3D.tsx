@@ -357,18 +357,21 @@ export default function RubiksCubeScene() {
       </Canvas>
       <div style={{ position: 'absolute', top: 20, left: 20 }}>
         <button
+          className='cursor-pointer'
           onClick={() => applyMove('R')}
           style={{ margin: '5px', padding: '10px' }}
         >
           Rotate Right (R)
         </button>
         <button
+          className='cursor-pointer'
           onClick={() => applyMove('U')}
           style={{ margin: '5px', padding: '10px' }}
         >
           Rotate Up (U)
         </button>
         <button
+          className='cursor-pointer'
           onClick={() => applyMove('F')}
           style={{ margin: '5px', padding: '10px' }}
         >

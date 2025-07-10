@@ -36,6 +36,7 @@ const SolutionPanels: React.FC<ChildProps> = ({
                 </Badge>
                 <div className='flex gap-1'>
                   <Button
+                    className='cursor-pointer'
                     size='sm'
                     variant='outline'
                     onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
@@ -44,6 +45,7 @@ const SolutionPanels: React.FC<ChildProps> = ({
                     <SkipBack className='w-4 h-4' />
                   </Button>
                   <Button
+                    className='cursor-pointer'
                     size='sm'
                     variant='outline'
                     onClick={() =>
@@ -74,9 +76,9 @@ const SolutionPanels: React.FC<ChildProps> = ({
                       <span className='font-mono text-sm'>{step}</span>
                       {index === currentStep && (
                         <Button
+                          className='cursor-pointer gap-1'
                           size='sm'
                           onClick={() => executeMove(step)}
-                          className='gap-1'
                         >
                           <Play className='w-3 h-3' />
                           Execute
