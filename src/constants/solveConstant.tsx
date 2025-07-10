@@ -28,6 +28,7 @@ export const createSolvedCube = (): CubeState => ({
   ],
   bottom: [
     ['yellow', 'yellow', 'yellow'],
+    ['yellow', 'yellow', 'yellow'],
     ['yellow', 'yellow', 'yellow']
   ]
 })

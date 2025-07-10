@@ -32,7 +32,7 @@ const CubeVisualization: React.FC<ChildProps> = ({
   const [cube, setCube] = useState<CubeState>(createSolvedCube())
 
   const handleScramble = () => {
-    setCube(scrambleCube(cube))
+    setCube(scrambleCube())
     setSolutionSteps([])
     setCurrentStep(0)
     setMoveHistory([])
@@ -73,6 +73,7 @@ const CubeVisualization: React.FC<ChildProps> = ({
             </div>
             <div className='flex gap-2'>
               <Button
+                className='cursor-pointer'
                 variant={show3D ? 'default' : 'outline'}
                 size='sm'
                 onClick={() => setShow3D(true)}
@@ -80,6 +81,7 @@ const CubeVisualization: React.FC<ChildProps> = ({
                 3D View
               </Button>
               <Button
+                className='cursor-pointer'
                 variant={!show3D ? 'default' : 'outline'}
                 size='sm'
                 onClick={() => setShow3D(false)}
@@ -104,7 +106,7 @@ const CubeVisualization: React.FC<ChildProps> = ({
             <Button
               onClick={handleScramble}
               variant='outline'
-              className='gap-2 bg-transparent'
+              className='gap-2 bg-transparent cursor-pointer'
             >
               <Shuffle className='w-4 h-4' />
               Scramble
@@ -112,7 +114,7 @@ const CubeVisualization: React.FC<ChildProps> = ({
             <Button
               onClick={handleReset}
               variant='outline'
-              className='gap-2 bg-transparent'
+              className='gap-2 bg-transparent cursor-pointer'
             >
               <RefreshCw className='w-4 h-4' />
               Reset
@@ -120,7 +122,7 @@ const CubeVisualization: React.FC<ChildProps> = ({
             <Button
               onClick={handleSolve}
               disabled={isSolving}
-              className='gap-2'
+              className='gap-2 cursor-pointer'
             >
               <Lightbulb className='w-4 h-4' />
               {isSolving ? 'Solving...' : 'Solve'}
