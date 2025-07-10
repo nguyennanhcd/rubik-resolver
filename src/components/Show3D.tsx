@@ -1,5 +1,5 @@
 import React from 'react'
-import { EnhancedCube3D } from './Cube3D'
+import { Cube3D } from './Cube3D'
 import { OrbitControls } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import { CubeState } from '@/interfaces/cubeInterfaces'
@@ -22,7 +22,7 @@ const Show3D: React.FC<ChildProps> = ({ solutionSteps, currentStep, cube }) => {
           shadow-mapSize-height={2048}
         />
         <pointLight position={[-10, -10, -10]} intensity={0.3} />
-        <EnhancedCube3D cube={cube} currentMove={solutionSteps[currentStep]} />
+        <Cube3D cube={cube} currentMove={solutionSteps[currentStep]} />
         <OrbitControls
           enablePan={false}
           enableZoom={true}

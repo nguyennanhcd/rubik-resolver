@@ -47,7 +47,6 @@ const CubeVisualization: React.FC<ChildProps> = ({
 
   const handleSolve = () => {
     setIsSolving(true)
-    // Simulate solving algorithm
     const mockSolution = [
       "R U R' U'",
       "F R U' R' U' R U R' F'",
@@ -64,6 +63,7 @@ const CubeVisualization: React.FC<ChildProps> = ({
   }
   return (
     <div className='lg:col-span-2'>
+      {/* Cube Visualization Card */}
       <Card>
         <CardHeader>
           <CardTitle className='flex items-center justify-between'>
