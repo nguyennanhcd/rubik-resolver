@@ -4,11 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Shuffle, RefreshCw, Lightbulb } from 'lucide-react'
 import { createSolvedCube } from '@/constants/solveConstant'
-import { CubeState } from '@/interfaces/cubeInterfaces'
 import { scrambleCube } from '@/lib/scrambleCube'
 import { faceRotations } from '@/constants/cubeConstant'
 import Show3D from './Show3D'
 import Show2D from './Show2D'
+import { CubeState } from '@/interfaces/cubeState'
 
 interface ChildProps {
   solutionSteps: string[]
@@ -47,20 +47,8 @@ const CubeVisualization: React.FC<ChildProps> = ({
 
   const handleSolve = () => {
     setIsSolving(true)
-    const mockSolution = [
-      "R U R' U'",
-      "F R U' R' U' R U R' F'",
-      "R U R' F' R U R' U' R' F R2 U' R'",
-      "R U R' U R U2 R'",
-      "R U2 R' U' R U' R'",
-      "F R U R' U' F'",
-      "R U R' U' R' F R F'",
-      "R U R' U R U2 R'"
-    ]
-    setSolutionSteps(mockSolution)
-    setCurrentStep(0)
-    setTimeout(() => setIsSolving(false), 1000)
   }
+
   return (
     <div className='lg:col-span-2'>
       {/* Cube Visualization Card */}
