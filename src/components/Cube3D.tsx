@@ -4,19 +4,11 @@ import { useRef, useState } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import type { Mesh, Group } from 'three'
+import { CubeState } from '@/interfaces/cubeState'
 
 // Type Definitions
 type CubeColor = 'white' | 'yellow' | 'red' | 'orange' | 'blue' | 'green'
 type CubeFace = CubeColor[][]
-
-interface CubeState {
-  front: CubeFace
-  back: CubeFace
-  left: CubeFace
-  right: CubeFace
-  top: CubeFace
-  bottom: CubeFace
-}
 
 const RUBIKS_COLORS: Record<CubeColor, string> = {
   white: '#ffffff',
