@@ -9,6 +9,7 @@ import { faceRotations } from '@/constants/cubeConstant'
 import Show3D from './Show3D'
 import Show2D from './Show2D'
 import { CubeState } from '@/interfaces/cubeState'
+import { solveCube } from '@/lib/solverEngine'
 
 interface ChildProps {
   solutionSteps: string[]
@@ -45,8 +46,13 @@ const CubeVisualization: React.FC<ChildProps> = ({
     setMoveHistory([])
   }
 
-  const handleSolve = () => {
+  const handleSolve = (cube: CubeState) => {
     setIsSolving(true)
+    console.log('📦 CubeState:', JSON.stringify(cube, null, 2))
+    const scrambledCube: CubeState = scrambleCube()
+    const moves = solveCube(scrambledCube)
+    console.log(moves)
+    moves.forEach((move) => executeMove(move))
   }
 
   return (
@@ -108,7 +114,7 @@ const CubeVisualization: React.FC<ChildProps> = ({
               Reset
             </Button>
             <Button
-              onClick={handleSolve}
+              onClick={() => handleSolve(cube)}
               disabled={isSolving}
               className='gap-2 cursor-pointer'
             >
