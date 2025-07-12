@@ -1,16 +1,15 @@
-/* eslint-disable react/no-unescaped-entities */
 import React, { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Shuffle, RefreshCw, Lightbulb } from 'lucide-react'
 import { createSolvedCube } from '@/constants/solveConstant'
 import { scrambleCube } from '@/lib/scrambleCube'
-import { faceRotations } from '@/constants/cubeConstant'
 import Show3D from './Show3D'
 import Show2D from './Show2D'
 import { CubeState } from '@/interfaces/cubeState'
 import { solveCube } from '@/lib/solverEngine'
 import { estimatePhaseSplit } from '@/lib/estimatePhase'
+import ManualControls from './ManualControls'
 
 interface ChildProps {
   solutionSteps: string[]
@@ -165,31 +164,7 @@ const CubeVisualization: React.FC<ChildProps> = ({
       </Card>
 
       {/* Manual Controls */}
-      <Card className='mt-6'>
-        <CardHeader>
-          <CardTitle>Manual Controls</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className='grid grid-cols-6 gap-2'>
-            {faceRotations.map(({ label, move, icon: Icon }) => (
-              <Button
-                key={move}
-                variant='outline'
-                size='sm'
-                onClick={() => executeMove(move)}
-                className='flex flex-col gap-1 h-auto py-2'
-              >
-                <Icon className='w-4 h-4' />
-                <span className='text-xs'>{label}</span>
-              </Button>
-            ))}
-          </div>
-          <div className='text-xs text-muted-foreground mt-2'>
-            R=Right, L=Left, U=Up, D=Down, F=Front, B=Back. ' =
-            Counter-clockwise
-          </div>
-        </CardContent>
-      </Card>
+      <ManualControls executeMove={executeMove} />
     </div>
   )
 }
