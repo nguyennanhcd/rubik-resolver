@@ -10,6 +10,7 @@ import Show3D from './Show3D'
 import Show2D from './Show2D'
 import { CubeState } from '@/interfaces/cubeState'
 import { solveCube } from '@/lib/solverEngine'
+import { estimatePhaseSplit } from '@/lib/estimatePhase'
 
 interface ChildProps {
   solutionSteps: string[]
@@ -71,19 +72,23 @@ const CubeVisualization: React.FC<ChildProps> = ({
 
   const handleSolve = (cube: CubeState) => {
     if (isCubeSolved(cube)) {
-      alert('🟢 Cube is already solved!')
+      alert('Cube is already solved!')
       return
     }
 
     setIsSolving(true)
     try {
       const solution = solveCube(cube)
-      setSolutionSteps(solution)
+      console.log(solution)
+      const { phase1, phase2 } = estimatePhaseSplit(solution)
+      const mergedPhases: string[] = [phase1.join(' '), phase2.join(' ')]
+      setSolutionSteps(mergedPhases)
+
       setCurrentStep(0)
       setMoveHistory([])
     } catch (err) {
       console.error(err)
-      alert('❌ Failed to solve cube.')
+      alert('Failed to solve cube.')
     } finally {
       setIsSolving(false)
     }
