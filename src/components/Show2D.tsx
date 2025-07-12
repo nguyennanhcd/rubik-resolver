@@ -1,6 +1,6 @@
 import React from 'react'
 import CubeFaceComponent from './CubeFaceComponent'
-import { CubeState } from '@/interfaces/cubeInterfaces'
+import { CubeState } from '@/interfaces/cubeState'
 
 interface ChildProps {
   cube: CubeState
