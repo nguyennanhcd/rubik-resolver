@@ -1,21 +1,41 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
-import type { Mesh, Group } from 'three'
+import type { Group, Mesh } from 'three'
+import { Vector3 } from 'three' // Import Vector3
 import { CubeState } from '@/interfaces/cubeState'
 
 // Type Definitions
 type CubeColor = 'white' | 'yellow' | 'red' | 'orange' | 'blue' | 'green'
 type CubeFace = CubeColor[][]
+type Move =
+  | 'U'
+  | "U'"
+  | 'U2'
+  | 'D'
+  | "D'"
+  | 'D2'
+  | 'L'
+  | "L'"
+  | 'L2'
+  | 'R'
+  | "R'"
+  | 'R2'
+  | 'F'
+  | "F'"
+  | 'F2'
+  | 'B'
+  | "B'"
+  | 'B2'
 
 const RUBIKS_COLORS: Record<CubeColor, string> = {
-  white: '#ffffff',
-  yellow: '#eab308',
-  red: '#dc2626',
-  orange: '#ea580c',
-  blue: '#2563eb',
-  green: '#16a34a'
+  white: '#f4f4f4',
+  yellow: '#ffd85f',
+  red: '#e06357',
+  orange: '#f08b46',
+  blue: '#4c74f0',
+  green: '#53d178'
 }
 
 interface SmartCubieProps {
@@ -97,14 +117,159 @@ function SmartCubie({ position, colors, isHighlighted }: SmartCubieProps) {
 
 interface Cube3DProps {
   cube: CubeState
-  currentMove?: string
+  currentMove?: Move
+  onMoveComplete?: () => void
 }
 
-export function Cube3D({ cube, currentMove }: Cube3DProps) {
+export function Cube3D({ cube, currentMove, onMoveComplete }: Cube3DProps) {
   const groupRef = useRef<Group>(null)
+  const rotationProgress = useRef(0)
+  const isAnimating = useRef(false)
 
-  useFrame((state) => {
-    if (groupRef.current && currentMove) {
+  useFrame((state, delta) => {
+    if (groupRef.current && currentMove && isAnimating.current) {
+      const speed = 2 // Rotation speed (radians per second)
+      let targetAngle: number
+      switch (currentMove) {
+        case 'U2':
+        case 'D2':
+        case 'L2':
+        case 'R2':
+        case 'F2':
+        case 'B2':
+          targetAngle = Math.PI // 180 degrees for double moves
+          break
+        case "U'":
+        case "D'":
+        case "L'":
+        case "R'":
+        case "F'":
+        case "B'":
+          targetAngle = -Math.PI / 2 // -90 degrees for counterclockwise
+          break
+        default:
+          targetAngle = Math.PI / 2 // 90 degrees for clockwise
+      }
+
+      rotationProgress.current += delta * speed
+      const progress = Math.min(
+        rotationProgress.current / (Math.abs(targetAngle) / speed),
+        1
+      )
+
+      let axis: [number, number, number] = [0, 0, 0]
+      let faceCubies: [number, number, number][] = []
+
+      switch (currentMove.charAt(0)) {
+        case 'U':
+          axis = [0, 1, 0]
+          faceCubies = [
+            [-1, 1, -1],
+            [-1, 1, 0],
+            [-1, 1, 1],
+            [0, 1, -1],
+            [0, 1, 0],
+            [0, 1, 1],
+            [1, 1, -1],
+            [1, 1, 0],
+            [1, 1, 1]
+          ]
+          break
+        case 'D':
+          axis = [0, -1, 0]
+          faceCubies = [
+            [-1, -1, -1],
+            [-1, -1, 0],
+            [-1, -1, 1],
+            [0, -1, -1],
+            [0, -1, 0],
+            [0, -1, 1],
+            [1, -1, -1],
+            [1, -1, 0],
+            [1, -1, 1]
+          ]
+          break
+        case 'L':
+          axis = [-1, 0, 0]
+          faceCubies = [
+            [-1, -1, -1],
+            [-1, -1, 0],
+            [-1, -1, 1],
+            [-1, 0, -1],
+            [-1, 0, 0],
+            [-1, 0, 1],
+            [-1, 1, -1],
+            [-1, 1, 0],
+            [-1, 1, 1]
+          ]
+          break
+        case 'R':
+          axis = [1, 0, 0]
+          faceCubies = [
+            [1, -1, -1],
+            [1, -1, 0],
+            [1, -1, 1],
+            [1, 0, -1],
+            [1, 0, 0],
+            [1, 0, 1],
+            [1, 1, -1],
+            [1, 1, 0],
+            [1, 1, 1]
+          ]
+          break
+        case 'F':
+          axis = [0, 0, 1]
+          faceCubies = [
+            [-1, -1, 1],
+            [-1, 0, 1],
+            [-1, 1, 1],
+            [0, -1, 1],
+            [0, 0, 1],
+            [0, 1, 1],
+            [1, -1, 1],
+            [1, 0, 1],
+            [1, 1, 1]
+          ]
+          break
+        case 'B':
+          axis = [0, 0, -1]
+          faceCubies = [
+            [-1, -1, -1],
+            [-1, 0, -1],
+            [-1, 1, -1],
+            [0, -1, -1],
+            [0, 0, -1],
+            [0, 1, -1],
+            [1, -1, -1],
+            [1, 0, -1],
+            [1, 1, -1]
+          ]
+          break
+      }
+
+      const vectorAxis = new Vector3(...axis) // Convert axis array to Vector3
+      const angle = targetAngle * progress
+      groupRef.current.children.forEach((child) => {
+        const pos = child.position.toArray() as [number, number, number]
+        if (
+          faceCubies.some(
+            ([fx, fy, fz]) =>
+              pos[0] === fx * 1.05 &&
+              pos[1] === fy * 1.05 &&
+              pos[2] === fz * 1.05
+          )
+        ) {
+          child.rotation.set(0, 0, 0) // Reset rotation
+          child.rotateOnWorldAxis(vectorAxis, angle) // Use Vector3 for axis
+        }
+      })
+
+      if (progress >= 1) {
+        isAnimating.current = false
+        rotationProgress.current = 0
+        if (onMoveComplete) onMoveComplete()
+      }
+    } else if (groupRef.current && !currentMove) {
       groupRef.current.rotation.y =
         Math.sin(state.clock.elapsedTime * 0.3) * 0.01
     }
@@ -180,5 +345,13 @@ export function Cube3D({ cube, currentMove }: Cube3DProps) {
     return cubelets
   }
 
+  useEffect(() => {
+    if (currentMove) {
+      isAnimating.current = true
+    }
+  }, [currentMove])
+
   return <group ref={groupRef}>{createCubelets()}</group>
 }
+
+export default Cube3D
