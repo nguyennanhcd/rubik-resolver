@@ -2,7 +2,7 @@ import React from 'react'
 import { Cube3D } from './Cube3D'
 import { OrbitControls } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
-import { CubeState } from '@/interfaces/cubeInterfaces'
+import { CubeState } from '@/interfaces/cubeState'
 
 interface ChildProps {
   solutionSteps: string[]
