@@ -46,10 +46,47 @@ const CubeVisualization: React.FC<ChildProps> = ({
     setMoveHistory([])
   }
 
+  function isCubeSolved(cube: CubeState): boolean {
+    const solved = createSolvedCube()
+
+    for (const face of [
+      'front',
+      'back',
+      'left',
+      'right',
+      'top',
+      'bottom'
+    ] as const) {
+      for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+          if (cube[face][i][j] !== solved[face][i][j]) {
+            return false
+          }
+        }
+      }
+    }
+
+    return true
+  }
+
   const handleSolve = (cube: CubeState) => {
+    if (isCubeSolved(cube)) {
+      alert('🟢 Cube is already solved!')
+      return
+    }
+
     setIsSolving(true)
-    console.log('📦 CubeState:', JSON.stringify(cube, null, 2))
-    console.log('📦 Solving CubeState:', solveCube(cube))
+    try {
+      const solution = solveCube(cube)
+      setSolutionSteps(solution)
+      setCurrentStep(0)
+      setMoveHistory([])
+    } catch (err) {
+      console.error(err)
+      alert('❌ Failed to solve cube.')
+    } finally {
+      setIsSolving(false)
+    }
   }
 
   return (
@@ -111,11 +148,12 @@ const CubeVisualization: React.FC<ChildProps> = ({
               Reset
             </Button>
             <Button
-              onClick={() => handleSolve(cube)}
-              disabled={isSolving}
               className='gap-2 cursor-pointer'
+              onClick={() => handleSolve(cube)}
+              disabled={isSolving || isCubeSolved(cube)}
             >
               <Lightbulb className='w-4 h-4' />
+              {isSolving ? 'Solving...' : 'Solve'}
             </Button>
           </div>
         </CardContent>

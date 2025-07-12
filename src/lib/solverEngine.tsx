@@ -56,6 +56,10 @@ export function solveCube(cubeState: CubeState): string[] {
     const cubeString = convertCubeStateToCubeString(cubeState)
     const cube = Cube.fromString(cubeString)
 
+    if (cube.isSolved()) {
+      return []
+    }
+
     const solution = cube.solve()
     console.log(solution)
     if (!solution) {
