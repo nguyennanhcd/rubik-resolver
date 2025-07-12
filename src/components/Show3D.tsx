@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react'
 import { Cube3D } from './Cube3D'
 import { OrbitControls } from '@react-three/drei'
@@ -9,6 +10,7 @@ interface ChildProps {
   currentStep: number
   cube: CubeState
 }
+
 const Show3D: React.FC<ChildProps> = ({ solutionSteps, currentStep, cube }) => {
   return (
     <div className='h-96 w-full bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg overflow-hidden'>
@@ -22,7 +24,7 @@ const Show3D: React.FC<ChildProps> = ({ solutionSteps, currentStep, cube }) => {
           shadow-mapSize-height={2048}
         />
         <pointLight position={[-10, -10, -10]} intensity={0.3} />
-        <Cube3D cube={cube} currentMove={solutionSteps[currentStep]} />
+        <Cube3D cube={cube} />
         <OrbitControls
           enablePan={false}
           enableZoom={true}

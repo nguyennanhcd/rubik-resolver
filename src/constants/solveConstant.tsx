@@ -1,4 +1,4 @@
-import { CubeState } from '@/interfaces/cubeInterfaces'
+import { CubeState } from '@/interfaces/cubeState'
 
 export const createSolvedCube = (): CubeState => ({
   front: [
