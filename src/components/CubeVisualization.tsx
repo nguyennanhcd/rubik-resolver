@@ -49,10 +49,7 @@ const CubeVisualization: React.FC<ChildProps> = ({
   const handleSolve = (cube: CubeState) => {
     setIsSolving(true)
     console.log('📦 CubeState:', JSON.stringify(cube, null, 2))
-    const scrambledCube: CubeState = scrambleCube()
-    const moves = solveCube(scrambledCube)
-    console.log(moves)
-    moves.forEach((move) => executeMove(move))
+    console.log('📦 Solving CubeState:', solveCube(cube))
   }
 
   return (
@@ -119,7 +116,6 @@ const CubeVisualization: React.FC<ChildProps> = ({
               className='gap-2 cursor-pointer'
             >
               <Lightbulb className='w-4 h-4' />
-              {isSolving ? 'Solving...' : 'Solve'}
             </Button>
           </div>
         </CardContent>
