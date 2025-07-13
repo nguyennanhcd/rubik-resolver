@@ -3,7 +3,7 @@
 import { useRef, useEffect, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import type { Group, Mesh } from 'three'
-import { Vector3 } from 'three'
+import { Vector3, Group as ThreeGroup } from 'three'
 
 // Type Definitions
 type CubeColor = 'white' | 'yellow' | 'red' | 'orange' | 'blue' | 'green'
@@ -134,6 +134,7 @@ export function Cube3D({ cube, currentMove, onMoveComplete }: Cube3DProps) {
   const rotationProgress = useRef(0)
   const isAnimating = useRef(false)
   const moveQueue = useRef<Move[]>([])
+  const rotatingGroupRef = useRef<ThreeGroup | null>(null)
 
   // Helper to rotate a face 90° clockwise
   const rotateFaceClockwise = (face: CubeFace): CubeFace => {
@@ -320,7 +321,7 @@ export function Cube3D({ cube, currentMove, onMoveComplete }: Cube3DProps) {
           const temp = [cube.front[0][2], cube.front[1][2], cube.front[2][2]]
           newCube.front[0][2] = cube.back[2][0]
           newCube.front[1][2] = cube.back[1][0]
-          newCube[2][2] = cube.back[0][0]
+          newCube.front[2][2] = cube.back[0][0]
           newCube.back[0][0] = temp[0]
           newCube.back[1][0] = temp[1]
           newCube.back[2][0] = temp[2]
@@ -573,24 +574,44 @@ export function Cube3D({ cube, currentMove, onMoveComplete }: Cube3DProps) {
           break
       }
 
+      if (!rotatingGroupRef.current) {
+        // Create a new group for the rotating face
+        rotatingGroupRef.current = new ThreeGroup()
+        groupRef.current.add(rotatingGroupRef.current)
+
+        // Move relevant cubies to the rotating group
+        const cubiesToRotate = groupRef.current.children.filter((child) => {
+          const pos = child.position.toArray() as [number, number, number]
+          return faceCubies.some(
+            ([fx, fy, fz]) =>
+              Math.abs(pos[0] - fx * 1.05) < 0.1 &&
+              Math.abs(pos[1] - fy * 1.05) < 0.1 &&
+              Math.abs(pos[2] - fz * 1.05) < 0.1
+          )
+        })
+
+        cubiesToRotate.forEach((cubie) => {
+          groupRef.current?.remove(cubie)
+          rotatingGroupRef.current?.add(cubie)
+        })
+      }
+
+      // Rotate the entire group
       const vectorAxis = new Vector3(...axis)
       const angle = targetAngle * progress
-      groupRef.current.children.forEach((child) => {
-        const pos = child.position.toArray() as [number, number, number]
-        if (
-          faceCubies.some(
-            ([fx, fy, fz]) =>
-              Math.round(pos[0] / 1.05) === fx &&
-              Math.round(pos[1] / 1.05) === fy &&
-              Math.round(pos[2] / 1.05) === fz
-          )
-        ) {
-          child.quaternion.set(0, 0, 0, 1) // Reset quaternion
-          child.rotateOnWorldAxis(vectorAxis, angle)
-        }
-      })
+      rotatingGroupRef.current.quaternion.set(0, 0, 0, 1) // Reset quaternion
+      rotatingGroupRef.current.rotateOnWorldAxis(vectorAxis, angle)
 
       if (progress >= 1) {
+        // Move cubies back to the main group
+        while (rotatingGroupRef.current.children.length > 0) {
+          const cubie = rotatingGroupRef.current.children[0]
+          rotatingGroupRef.current.remove(cubie)
+          groupRef.current.add(cubie)
+        }
+        groupRef.current.remove(rotatingGroupRef.current)
+        rotatingGroupRef.current = null
+
         isAnimating.current = false
         rotationProgress.current = 0
         const newCubeState = updateCubeState(cube, current)
