@@ -1,17 +1,24 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+// Show3D.tsx
 import React from 'react'
 import { Cube3D } from './Cube3D'
 import { OrbitControls } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import { CubeState } from '@/interfaces/cubeState'
+import { Move } from './Cube3D'
 
 interface ChildProps {
   solutionSteps: string[]
   currentStep: number
   cube: CubeState
+  currentMove?: Move
+  onMoveComplete?: () => void
 }
 
-const Show3D: React.FC<ChildProps> = ({ solutionSteps, currentStep, cube }) => {
+const Show3D: React.FC<ChildProps> = ({
+  cube,
+  currentMove,
+  onMoveComplete
+}) => {
   return (
     <div className='h-96 w-full bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg overflow-hidden'>
       <Canvas camera={{ position: [5, 5, 5], fov: 50 }} shadows>
@@ -24,7 +31,11 @@ const Show3D: React.FC<ChildProps> = ({ solutionSteps, currentStep, cube }) => {
           shadow-mapSize-height={2048}
         />
         <pointLight position={[-10, -10, -10]} intensity={0.3} />
-        <Cube3D cube={cube} />
+        <Cube3D
+          cube={cube}
+          currentMove={currentMove}
+          onMoveComplete={onMoveComplete}
+        />
         <OrbitControls
           enablePan={false}
           enableZoom={true}

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// CubeVisualization.tsx
 import React, { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -10,6 +12,7 @@ import { CubeState } from '@/interfaces/cubeState'
 import { solveCube } from '@/lib/solverEngine'
 import { estimatePhaseSplit } from '@/lib/estimatePhase'
 import ManualControls from './ManualControls'
+import { applyMove } from '@/lib/cubeMoves'
 
 interface ChildProps {
   solutionSteps: string[]
@@ -25,18 +28,19 @@ const CubeVisualization: React.FC<ChildProps> = ({
   setSolutionSteps,
   currentStep,
   setCurrentStep,
-  setMoveHistory,
-  executeMove
+  setMoveHistory
 }: ChildProps) => {
   const [show3D, setShow3D] = useState(true)
   const [isSolving, setIsSolving] = useState(false)
   const [cube, setCube] = useState<CubeState>(createSolvedCube())
+  const [currentMove, setCurrentMove] = useState<string | undefined>(undefined) // Track current move for animation
 
   const handleScramble = () => {
     setCube(scrambleCube())
     setSolutionSteps([])
     setCurrentStep(0)
     setMoveHistory([])
+    setCurrentMove(undefined)
   }
 
   const handleReset = () => {
@@ -44,11 +48,11 @@ const CubeVisualization: React.FC<ChildProps> = ({
     setSolutionSteps([])
     setCurrentStep(0)
     setMoveHistory([])
+    setCurrentMove(undefined)
   }
 
   function isCubeSolved(cube: CubeState): boolean {
     const solved = createSolvedCube()
-
     for (const face of [
       'front',
       'back',
@@ -65,7 +69,6 @@ const CubeVisualization: React.FC<ChildProps> = ({
         }
       }
     }
-
     return true
   }
 
@@ -74,15 +77,12 @@ const CubeVisualization: React.FC<ChildProps> = ({
       alert('Cube is already solved!')
       return
     }
-
     setIsSolving(true)
     try {
       const solution = solveCube(cube)
-      console.log(solution)
       const { phase1, phase2 } = estimatePhaseSplit(solution)
       const mergedPhases: string[] = [phase1.join(' '), phase2.join(' ')]
       setSolutionSteps(mergedPhases)
-
       setCurrentStep(0)
       setMoveHistory([])
     } catch (err) {
@@ -93,9 +93,26 @@ const CubeVisualization: React.FC<ChildProps> = ({
     }
   }
 
+  // Implement executeMove to update cube state and trigger animation
+  const handleExecuteMove = (move: string) => {
+    if (!isSolving) {
+      setCurrentMove(move) // Set the move for animation
+      setMoveHistory((prev) => [...prev, move]) // Update move history
+      setCube((prevCube) => {
+        const newCube = JSON.parse(JSON.stringify(prevCube)) // Deep copy
+        applyMove(newCube, move) // Apply the move to update cube state
+        return newCube
+      })
+    }
+  }
+
+  // Callback when move animation is complete
+  const handleMoveComplete = () => {
+    setCurrentMove(undefined) // Clear current move after animation
+  }
+
   return (
     <div className='lg:col-span-2'>
-      {/* Cube Visualization Card */}
       <Card>
         <CardHeader>
           <CardTitle className='flex items-center justify-between'>
@@ -129,11 +146,12 @@ const CubeVisualization: React.FC<ChildProps> = ({
               solutionSteps={solutionSteps}
               currentStep={currentStep}
               cube={cube}
+              currentMove={currentMove as any} // Pass current move
+              onMoveComplete={handleMoveComplete} // Pass callback
             />
           ) : (
             <Show2D cube={cube} />
           )}
-
           <div className='flex justify-center gap-2 mt-6'>
             <Button
               onClick={handleScramble}
@@ -162,9 +180,7 @@ const CubeVisualization: React.FC<ChildProps> = ({
           </div>
         </CardContent>
       </Card>
-
-      {/* Manual Controls */}
-      <ManualControls executeMove={executeMove} />
+      <ManualControls executeMove={handleExecuteMove} />
     </div>
   )
 }
