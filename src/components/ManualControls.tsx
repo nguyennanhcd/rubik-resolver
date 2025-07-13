@@ -76,7 +76,7 @@ const ManualControls = ({ executeMove }: ChildProps) => {
               variant='outline'
               size='sm'
               onClick={() => executeMove(move)}
-              className='flex flex-col gap-1 h-auto py-2'
+              className='flex flex-col gap-1 h-auto py-2 cursor-pointer'
             >
               <Icon className='w-4 h-4' />
               <span className='text-xs'>{label}</span>

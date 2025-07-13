@@ -9,7 +9,7 @@ import { CubeState } from '@/interfaces/cubeState'
 // Type Definitions
 type CubeColor = 'white' | 'yellow' | 'red' | 'orange' | 'blue' | 'green'
 type CubeFace = CubeColor[][]
-type Move =
+export type Move =
   | 'U'
   | "U'"
   | 'U2'
