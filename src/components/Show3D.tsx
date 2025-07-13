@@ -1,10 +1,9 @@
 // Show3D.tsx
 import React from 'react'
-import { Cube3D } from './Cube3D'
+import { Cube3D, Move } from './Cube3D'
 import { OrbitControls } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import { CubeState } from '@/interfaces/cubeState'
-import { Move } from './Cube3D'
 
 interface ChildProps {
   solutionSteps: string[]
