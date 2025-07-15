@@ -9,9 +9,17 @@ export default function RubikResolver() {
   const [currentStep, setCurrentStep] = useState(0)
   const [moveHistory, setMoveHistory] = useState<string[]>([])
   const [solutionSteps, setSolutionSteps] = useState<string[]>([])
+  const [pendingMove, setPendingMove] = useState<string | null>(null)
 
-  const executeMove = (move: string) => {
+  // This handler will be passed to both SolutionPanels and ManualControls
+  const handleExecuteMove = (move: string) => {
+    setPendingMove(move)
+  }
+
+  // This callback is called by CubeVisualization after the move is animated/applied
+  const handleMoveApplied = (move: string) => {
     setMoveHistory((prev) => [...prev, move])
+    setPendingMove(null)
   }
 
   return (
@@ -34,16 +42,22 @@ export default function RubikResolver() {
             currentStep={currentStep}
             setCurrentStep={setCurrentStep}
             setMoveHistory={setMoveHistory}
-            executeMove={executeMove}
+            pendingMove={pendingMove}
+            onMoveApplied={handleMoveApplied}
           />
 
           {/* Solution Panel */}
           <SolutionPanels
-            executeMove={executeMove}
+            executeMove={handleExecuteMove}
             solutionSteps={solutionSteps}
             currentStep={currentStep}
             setCurrentStep={setCurrentStep}
             moveHistory={moveHistory}
+            onMoveComplete={() => {
+              setCurrentStep((prev) =>
+                prev < solutionSteps.length - 1 ? prev + 1 : prev
+              )
+            }}
           />
         </div>
       </div>

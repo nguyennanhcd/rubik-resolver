@@ -12,12 +12,12 @@ const faceToColor: Record<string, CubeColor> = {
 }
 
 const faceNames: (keyof CubeState)[] = [
-  'top',
-  'bottom',
   'front',
   'back',
   'left',
-  'right'
+  'right',
+  'top',
+  'bottom'
 ]
 
 export function convertCubeStringToCubeState(cubeString: string): CubeState {

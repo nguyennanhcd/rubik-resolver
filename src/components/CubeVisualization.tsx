@@ -20,7 +20,8 @@ interface ChildProps {
   currentStep: number
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>
   setMoveHistory: React.Dispatch<React.SetStateAction<string[]>>
-  executeMove: (move: string) => void
+  pendingMove?: string | null
+  onMoveApplied?: (move: string) => void
 }
 
 const CubeVisualization: React.FC<ChildProps> = ({
@@ -28,7 +29,9 @@ const CubeVisualization: React.FC<ChildProps> = ({
   setSolutionSteps,
   currentStep,
   setCurrentStep,
-  setMoveHistory
+  setMoveHistory,
+  pendingMove,
+  onMoveApplied
 }: ChildProps) => {
   const [show3D, setShow3D] = useState(true)
   const [isSolving, setIsSolving] = useState(false)
@@ -97,19 +100,30 @@ const CubeVisualization: React.FC<ChildProps> = ({
   const handleExecuteMove = (move: string) => {
     if (!isSolving) {
       setCurrentMove(move) // Set the move for animation
-      setMoveHistory((prev) => [...prev, move]) // Update move history
       setCube((prevCube) => {
         const newCube = JSON.parse(JSON.stringify(prevCube)) // Deep copy
         applyMove(newCube, move) // Apply the move to update cube state
         return newCube
       })
+      // Move history and callback will be handled after animation
     }
   }
 
   // Callback when move animation is complete
   const handleMoveComplete = () => {
+    if (currentMove && onMoveApplied) {
+      onMoveApplied(currentMove)
+    }
     setCurrentMove(undefined) // Clear current move after animation
   }
+
+  // React to pendingMove prop from parent (SolutionPanels or ManualControls)
+  React.useEffect(() => {
+    if (pendingMove) {
+      handleExecuteMove(pendingMove)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingMove])
 
   return (
     <div className='lg:col-span-2'>
