@@ -13,12 +13,12 @@ const colorToFace: Record<string, string> = {
 }
 
 const faceOrder: (keyof CubeState)[] = [
-  'top', // U
-  'bottom', // D
   'front', // F
   'back', // B
   'left', // L
-  'right' // R
+  'right', // R
+  'top', // U
+  'bottom' // D
 ]
 
 export function convertCubeStateToCubeString(cube: CubeState): string {
