@@ -2,24 +2,24 @@ import { CubeState } from '@/interfaces/cubeState'
 
 export const createSolvedCube = (): CubeState => ({
   front: [
-    ['red', 'red', 'red'],
-    ['red', 'red', 'red'],
-    ['red', 'red', 'red']
-  ],
-  back: [
-    ['orange', 'orange', 'orange'],
-    ['orange', 'orange', 'orange'],
-    ['orange', 'orange', 'orange']
-  ],
-  left: [
     ['green', 'green', 'green'],
     ['green', 'green', 'green'],
     ['green', 'green', 'green']
   ],
-  right: [
+  back: [
     ['blue', 'blue', 'blue'],
     ['blue', 'blue', 'blue'],
     ['blue', 'blue', 'blue']
+  ],
+  left: [
+    ['orange', 'orange', 'orange'],
+    ['orange', 'orange', 'orange'],
+    ['orange', 'orange', 'orange']
+  ],
+  right: [
+    ['red', 'red', 'red'],
+    ['red', 'red', 'red'],
+    ['red', 'red', 'red']
   ],
   top: [
     ['white', 'white', 'white'],

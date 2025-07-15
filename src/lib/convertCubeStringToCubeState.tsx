@@ -3,12 +3,12 @@ import { CubeState } from '@/interfaces/cubeState'
 import { CubeColor, CubeFace } from '@/types/cubeType'
 
 const faceToColor: Record<string, CubeColor> = {
-  U: 'white',
-  D: 'yellow',
-  F: 'red',
-  B: 'orange',
-  L: 'blue',
-  R: 'green'
+  U: 'white', // up
+  D: 'yellow', // down
+  F: 'green', // front
+  B: 'blue', // back
+  L: 'orange', // left
+  R: 'red' // right
 }
 
 const faceNames: (keyof CubeState)[] = [

@@ -4,21 +4,21 @@ const Cube = require('cubejs')
 Cube.initSolver()
 
 const colorToFace: Record<string, string> = {
-  white: 'U',
-  yellow: 'D',
-  red: 'F',
-  orange: 'B',
-  blue: 'L',
-  green: 'R'
+  white: 'U', // up
+  yellow: 'D', // down
+  green: 'F', // front
+  blue: 'B', // back
+  orange: 'L', // left
+  red: 'R' // right
 }
 
 const faceOrder: (keyof CubeState)[] = [
-  'top',
-  'bottom',
-  'front',
-  'back',
-  'left',
-  'right'
+  'top', // U
+  'bottom', // D
+  'front', // F
+  'back', // B
+  'left', // L
+  'right' // R
 ]
 
 export function convertCubeStateToCubeString(cube: CubeState): string {
